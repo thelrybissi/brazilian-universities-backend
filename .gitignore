@@ -1,0 +1,28 @@
+# .NET
+brazilian-universities-backend/bin/
+brazilian-universities-backend/obj/
+brazilian-universities-backend/*.user
+brazilian-universities-backend/*.suo
+brazilian-universities-backend/*.csproj.user
+
+# Logs
+*.log
+*.tmp
+*.temp
+*.swp
+
+# Docker
+**/.env
+**/docker-compose.override.yml
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# ZIP or archives
+*.zip
