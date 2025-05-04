@@ -1,0 +1,43 @@
+# University Backend (.NET 8 API)
+
+API desenvolvida em .NET 8 que consome dados da [University Domains API](http://universities.hipolabs.com/) e retorna apenas universidades brasileiras.
+
+---
+
+## 🔧 Tecnologias utilizadas
+
+- .NET 8 Web API
+- Swagger (Swashbuckle)
+- Docker
+- HTTP Client
+- CORS habilitado
+
+---
+
+## 🚀 Como rodar localmente
+
+### ✔️ Pré-requisitos
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Docker](https://www.docker.com/)
+
+---
+
+### 🔹 1. Rodando com .NET CLI
+
+# Restaura as dependências
+dotnet restore
+
+# Executa a API
+dotnet run
+
+
+### 🔹 1. Rodando com Docker
+
+```bash
+# Build da imagem
+docker build -t university-backend .
+
+# Rodar o container na porta 5000
+docker run -p 5000:80 university-backend
+

@@ -19,7 +19,20 @@ public class UniversitiesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var universities = await _httpClient.GetFromJsonAsync<List<University>>("http://universities.hipolabs.com/search?country=Brazil");
-        return Ok(universities);
+        try
+        {
+            var universities = await _httpClient.GetFromJsonAsync<List<University>>(
+                "http://universities.hipolabs.com/search?country=Brazil"
+            );
+
+            if (universities == null || universities.Count == 0)
+                return NotFound("Nenhuma universidade encontrada.");
+
+            return Ok(universities);
+        }
+        catch (Exception)
+        {
+            return StatusCode(503, "Erro ao acessar o serviço de universidades.");
+        }
     }
 }
