@@ -2,6 +2,9 @@
 
 API desenvolvida em .NET 8 que consome dados da [University Domains API](http://universities.hipolabs.com/) e retorna apenas universidades brasileiras.
 
+Para acessar a versão deployada acesso o link:
+https://brazilian-universities-backend-production.up.railway.app/swagger/index.html
+
 ---
 
 ## 🔧 Tecnologias utilizadas
@@ -30,6 +33,9 @@ dotnet restore
 
 # Executa a API
 dotnet run
+
+# Swagger
+https://localhost:port/swagger
 
 
 ### 🔹 1. Rodando com Docker
