@@ -1,7 +1,10 @@
+using brazilian_universities_backend.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+builder.Services.AddHttpClient(); 
+builder.Services.AddScoped<IUniversityService, UniversityService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

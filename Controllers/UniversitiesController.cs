@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 using backend.Models;
+using brazilian_universities_backend.Services;
 
 
 namespace backend.Controllers;
@@ -9,11 +10,11 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class UniversitiesController : ControllerBase
 {
-    private readonly HttpClient _httpClient;
+    private readonly IUniversityService _universityService;
 
-    public UniversitiesController(IHttpClientFactory httpClientFactory)
+    public UniversitiesController(IUniversityService universityService)
     {
-        _httpClient = httpClientFactory.CreateClient();
+        _universityService = universityService;
     }
 
     [HttpGet]
@@ -21,9 +22,8 @@ public class UniversitiesController : ControllerBase
     {
         try
         {
-            var universities = await _httpClient.GetFromJsonAsync<List<University>>(
-                "http://universities.hipolabs.com/search?country=Brazil"
-            );
+            
+            var universities = await _universityService.GetUniversitiesAsync();
 
             if (universities == null || universities.Count == 0)
                 return NotFound("Nenhuma universidade encontrada.");

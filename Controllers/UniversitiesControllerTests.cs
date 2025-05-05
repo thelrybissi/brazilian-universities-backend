@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.Json;
 using brazilian_universities_backend.Controllers.MockController;
+using brazilian_universities_backend.Services;
 
 public class UniversitiesControllerTests
 {
@@ -23,22 +24,11 @@ public class UniversitiesControllerTests
             new University { Name = "UFU", Country = "Brazil" },
             new University { Name = "USP", Country = "Brazil" }
         };
-        
-        var json = JsonSerializer.Serialize(mockUniversities);
 
+        var serviceMock = new Mock<IUniversityService>();
+        serviceMock.Setup(s => s.GetUniversitiesAsync()).ReturnsAsync(mockUniversities);
 
-        var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(json)
-        };
-
-        var fakeHandler = new FakeHttpMessageHandler(fakeResponse);
-        var httpClient = new HttpClient(fakeHandler);
-
-        var httpClientFactory = new Mock<IHttpClientFactory>();
-        httpClientFactory.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(httpClient);
-
-        var controller = new UniversitiesController(httpClientFactory.Object);
+        var controller = new UniversitiesController(serviceMock.Object);
 
         // Act
         var result = await controller.Get();
@@ -53,20 +43,10 @@ public class UniversitiesControllerTests
     public async Task Get_ReturnsNotFound_WhenListIsEmpty()
     {
         // Arrange
-        var json = JsonSerializer.Serialize(new List<University>());
+        var serviceMock = new Mock<IUniversityService>();
+        serviceMock.Setup(s => s.GetUniversitiesAsync()).ReturnsAsync(new List<University>());
 
-        var fakeResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(json)
-        };
-
-        var fakeHandler = new FakeHttpMessageHandler(fakeResponse);
-        var httpClient = new HttpClient(fakeHandler);
-
-        var httpClientFactory = new Mock<IHttpClientFactory>();
-        httpClientFactory.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(httpClient);
-
-        var controller = new UniversitiesController(httpClientFactory.Object);
+        var controller = new UniversitiesController(serviceMock.Object);
 
         // Act
         var result = await controller.Get();
@@ -80,13 +60,10 @@ public class UniversitiesControllerTests
     public async Task Get_Returns503_WhenExceptionIsThrown()
     {
         // Arrange
-        var exceptionHandler = new ExceptionThrowingHttpMessageHandler(new HttpRequestException("Erro"));
-        var httpClient = new HttpClient(exceptionHandler);
+        var serviceMock = new Mock<IUniversityService>();
+        serviceMock.Setup(s => s.GetUniversitiesAsync()).ThrowsAsync(new HttpRequestException("Erro"));
 
-        var httpClientFactoryMock = new Mock<IHttpClientFactory>();
-        httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-
-        var controller = new UniversitiesController(httpClientFactoryMock.Object);
+        var controller = new UniversitiesController(serviceMock.Object);
 
         // Act
         var result = await controller.Get();
@@ -94,5 +71,6 @@ public class UniversitiesControllerTests
         // Assert
         var statusCodeResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(503, statusCodeResult.StatusCode);
+        Assert.Equal("Erro ao acessar o serviço de universidades.", statusCodeResult.Value);
     }
 }
