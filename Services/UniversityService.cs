@@ -1,22 +1,33 @@
 ﻿using backend.Models;
+using brazilian_universities_backend.Services;
 
-namespace brazilian_universities_backend.Services
+public class UniversityService : IUniversityService
 {
-    public class UniversityService : IUniversityService
+    private readonly HttpClient _httpClient;
+
+    public UniversityService(IHttpClientFactory httpClientFactory)
     {
+        _httpClient = httpClientFactory.CreateClient();
+    }
 
-        private readonly HttpClient _httpClient;
+    public async Task<PaginatedResult<University>> GetUniversitiesAsync(int page, int pageSize)
+    {
+        var universities = await _httpClient.GetFromJsonAsync<List<University>>(
+            "http://universities.hipolabs.com/search?country=Brazil"
+        );
 
-        public UniversityService(IHttpClientFactory httpClientFactory)
+        if (universities == null)
         {
-            _httpClient = httpClientFactory.CreateClient();
+            return new PaginatedResult<University>(new List<University>(), 0, page, pageSize);
         }
 
-        public async Task<List<University>?> GetUniversitiesAsync()
-        {
-            return await _httpClient.GetFromJsonAsync<List<University>>(
-                "http://universities.hipolabs.com/search?country=Brazil"
-            );
-        }
+        var totalCount = universities.Count;
+
+        var items = universities
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new PaginatedResult<University>(items, totalCount, page, pageSize);
     }
 }

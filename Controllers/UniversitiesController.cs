@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Json;
-using backend.Models;
 using brazilian_universities_backend.Services;
+using backend.Models;
 
 
 namespace backend.Controllers;
@@ -18,17 +17,20 @@ public class UniversitiesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         try
         {
-            
-            var universities = await _universityService.GetUniversitiesAsync();
 
-            if (universities == null || universities.Count == 0)
+            if (page <= 0 || pageSize <= 0)
+                return BadRequest("Parâmetros de paginação inválidos.");
+
+            var result = await _universityService.GetUniversitiesAsync(page, pageSize);
+
+            if (result.TotalCount == 0)
                 return NotFound("Nenhuma universidade encontrada.");
 
-            return Ok(universities);
+            return Ok(result);
         }
         catch (Exception)
         {

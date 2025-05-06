@@ -4,6 +4,6 @@ namespace brazilian_universities_backend.Services
 {
     public interface IUniversityService
     {
-        Task<List<University>?> GetUniversitiesAsync();
+        Task<PaginatedResult<University>> GetUniversitiesAsync(int page, int pageSize);
     }
 }
